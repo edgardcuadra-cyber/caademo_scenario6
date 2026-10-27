@@ -62,7 +62,8 @@ def main():
 
     html = re.sub(r"<script\b([^>]*)>(.*?)</script>", script, html, flags=re.S)
     html = re.sub(r"<noscript>.*?</noscript>", "", html, flags=re.S)           # GTM iframe
-    html = re.sub(r'((?:href|src|action|data-src|poster)=")~?/(?!/)', rf"\1{ORIGIN}/", html)
+    html = re.sub(r'(\s[a-zA-Z][\w-]*=")~?/(?!/)', rf"\1{ORIGIN}/", html)        # any attribute, e.g. data-bg-desktop
+    html = re.sub(r'(["\'])~/(media|-)/', rf"\1{ORIGIN}/~/\2/", html)            # "~/media/..." in inline scripts
     html = re.sub(r'(srcset=")([^"]+)"',
                   lambda m: m.group(1) + re.sub(r"(^|,\s*)/(?!/)", rf"\1{ORIGIN}/", m.group(2)) + '"', html)
     html = re.sub(r"url\((['\"]?)/(?!/)", rf"url(\1{ORIGIN}/", html)
